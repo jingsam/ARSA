@@ -47,6 +47,10 @@ to setup
 end
 
 to go
+  ask turtles [
+    
+  ]
+  
   ask basic-villagers [
     let target [one-of patches in-radius max-distance] of patch ox oy
     
@@ -229,10 +233,10 @@ NIL
 1
 
 PLOT
-289
-36
-651
-351
+305
+10
+667
+325
 效用评价
 NIL
 NIL
@@ -553,34 +557,6 @@ TEXTBOX
 0.0
 1
 
-INPUTBOX
-11
-858
-280
-918
-output
-NIL
-1
-0
-String
-
-BUTTON
-12
-818
-279
-851
-输出结果文件
-set output user-new-file
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 CHOOSER
 11
 485
@@ -627,10 +603,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-290
-365
-465
-414
+306
+339
+481
+388
 中心村面积
 count central-villagers
 17
@@ -638,15 +614,32 @@ count central-villagers
 12
 
 MONITOR
-475
-365
-650
-414
+491
+339
+666
+388
 基层村面积
 count basic-villagers
 17
 1
 12
+
+BUTTON
+10
+820
+275
+853
+输出结果文件
+NIL
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
