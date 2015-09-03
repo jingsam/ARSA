@@ -8,7 +8,7 @@ breed [basic-villagers basic-villager]
 turtles-own [ox oy oid]
 
 to setup
-  clear-all
+  clear-all  
   
   import-village-data
   import-id-data
@@ -44,19 +44,29 @@ to setup
     
     set pcolor yellow + 1
   ]
+  
+  reset-ticks
 end
 
 to go
-  ask turtles [
+  ask central-villagers with [not all? neighbors4 [village = 2]] [
     
-  ]
+  ] 
   
   ask basic-villagers [
-    let target [one-of patches in-radius max-distance] of patch ox oy
+    let target [one-of patches in-radius max-distance with [village >= 0 and forbid = 0 and not any? turtles]] of patch ox oy
     
-    if target != nobody and [utility] of target > utility
+    if any? [neighbors4 with [village = 3]] of target
+    [
+      set village 0
+      die
+    ]
+    
+    if [utility] of target > utility
     [move-to target]
-  ]  
+  ]
+  
+  tick
 end
 
 to-report import-data [file]
@@ -97,7 +107,10 @@ to display-village-data
       [set pcolor black]
       [ifelse village = 2
         [set pcolor red + 3]
-        [set pcolor white]
+        [ifelse village = 3
+          [set pcolor red]
+          [set pcolor white]
+        ]        
       ]
     ]
   ]
@@ -148,10 +161,16 @@ to display-forbid-data
   ]
 end
 
-to-report utility
-  let compact count neighbors with [village > 0] / count neighbors
+to-report compact
+  report count neighbors with [village = 1 or village = 2] / count neighbors 
+end
 
+to-report utility
   report suit * suit-weight + compact * compact-weight
+end
+
+to-report my-patch
+  
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -241,16 +260,16 @@ PLOT
 NIL
 NIL
 0.0
-10.0
+1.0
 0.0
 1.0
 true
 true
 "" ""
 PENS
-"适宜性" 1.0 0 -2674135 true "" ""
-"紧凑度" 1.0 0 -10899396 true "" ""
-"综合效用值" 1.0 0 -13345367 true "" ""
+"适宜性" 1.0 0 -2674135 true "" "plot mean [suit] of turtles"
+"紧凑度" 1.0 0 -10899396 true "" "plot mean [compact] of turtles"
+"综合效用值" 1.0 0 -13345367 true "" "plot mean [utility] of turtles"
 
 TEXTBOX
 18
@@ -541,7 +560,7 @@ save-ratio
 save-ratio
 0
 1
-0.8
+0.4
 0.1
 1
 NIL
@@ -603,10 +622,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-306
-339
-481
-388
+305
+455
+480
+504
 中心村面积
 count central-villagers
 17
@@ -614,10 +633,10 @@ count central-villagers
 12
 
 MONITOR
-491
-339
-666
-388
+490
+455
+665
+504
 基层村面积
 count basic-villagers
 17
@@ -640,6 +659,39 @@ NIL
 NIL
 NIL
 1
+
+MONITOR
+305
+330
+480
+379
+适宜性
+mean [suit] of turtles
+6
+1
+12
+
+MONITOR
+305
+385
+665
+434
+综合效用值
+mean [utility] of turtles
+6
+1
+12
+
+MONITOR
+490
+330
+665
+379
+紧凑度
+mean [compact] of turtles
+6
+1
+12
 
 @#$#@#$#@
 ## WHAT IS IT?
