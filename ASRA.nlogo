@@ -80,7 +80,7 @@ to go
       move-to target
       set village 2
       set id [id] of [one-of neighbors4 with [village = 2]] of target
-      hatch-central-villagers 1 [set color red + 3]
+      hatch-central-villagers 1 [set shape "square"]
       die
     ]
   ]
@@ -187,14 +187,6 @@ end
 
 to-report utility
   report suit * suit-weight + compact * compact-weight
-end
-
-to-report cluster
-  
-end
-
-to-report find-cluster
-  
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -584,7 +576,7 @@ save-ratio
 save-ratio
 0
 1
-0.4
+0.8
 0.1
 1
 NIL
@@ -673,7 +665,7 @@ BUTTON
 275
 853
 输出优化方案
-NIL
+gis:store-dataset gis:patch-dataset village user-new-file
 NIL
 1
 T
