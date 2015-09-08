@@ -50,21 +50,21 @@ end
 
 to go
   ask central-villagers with [not all? neighbors4 [village = 2]] [
-    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles]] of patch ox oy
+    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles-on self]] of patch ox oy
     let village-id id
     
     ;Intensive development
-    if any? [neighbors4 with [id = village-id]] of target and [utility] of target > utility [
+    if target != nobody and any? [neighbors4 with [id = village-id]] of target and [utility] of target > utility [
       set village 0
       set id -9999
       move-to target
       set village 2
       set id village-id
     ]
-  ] 
+  ]
   
   ask basic-villagers [
-    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles]] of patch ox oy
+    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles-on self]] of patch ox oy
     
     ;Urbanization
     if any? [neighbors4 with [village = 3]] of target [
