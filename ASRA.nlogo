@@ -5,7 +5,7 @@ patches-own [village id suit forbid]
 breed [central-villagers central-villager]
 breed [basic-villagers basic-villager]
 
-turtles-own [ox oy oid]
+turtles-own [ox oy]
 
 to setup
   clear-all  
@@ -15,13 +15,13 @@ to setup
   import-suit-data
   import-forbid-data
   display-village-data
-    
+  
+  ;Intialize basic-villagers
   ask patches with [village = 1] [
     ifelse (random-float 1) <= save-ratio
     [sprout-basic-villagers 1 [
       set ox pxcor
       set oy pycor
-      set oid id
       set color black
       set shape "square"
       set size 1
@@ -32,11 +32,11 @@ to setup
     set pcolor yellow + 1
   ]
   
+  ;Intialize central-villagers
   ask patches with [village = 2] [
     sprout-central-villagers 1 [
       set ox pxcor
       set oy pycor
-      set oid id
       set color red + 3
       set shape "square"
       set size 1
@@ -50,23 +50,43 @@ end
 
 to go
   ask central-villagers with [not all? neighbors4 [village = 2]] [
+    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles]] of patch ox oy
+    let village-id id
     
+    ;Intensive development
+    if any? [neighbors4 with [id = village-id]] of target and [utility] of target > utility [
+      set village 0
+      set id -9999
+      move-to target
+      set village 2
+      set id village-id
+    ]
   ] 
   
   ask basic-villagers [
-    let target [one-of patches in-radius max-distance with [village >= 0 and forbid = 0 and not any? turtles]] of patch ox oy
+    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles]] of patch ox oy
     
-    if any? [neighbors4 with [village = 3]] of target
-    [
+    ;Urbanization
+    if any? [neighbors4 with [village = 3]] of target [
       set village 0
+      set id -9999
       die
     ]
     
-    if [utility] of target > utility
-    [move-to target]
+    ;Resettle to central village
+    if any? [neighbors4 with [village = 2]] of target [
+      set village 0
+      set id -9999
+      move-to target
+      set village 2
+      set id [id] of [one-of neighbors4 with [village = 2]] of target
+      hatch-central-villagers 1 [set color red + 3]
+      die
+    ]
   ]
   
   tick
+
 end
 
 to-report import-data [file]
@@ -169,7 +189,11 @@ to-report utility
   report suit * suit-weight + compact * compact-weight
 end
 
-to-report my-patch
+to-report cluster
+  
+end
+
+to-report find-cluster
   
 end
 @#$#@#$#@
@@ -627,7 +651,7 @@ MONITOR
 480
 504
 中心村面积
-count central-villagers
+count patches with [village = 2]
 17
 1
 12
@@ -638,7 +662,7 @@ MONITOR
 665
 504
 基层村面积
-count basic-villagers
+count patches with [village = 1]
 17
 1
 12
@@ -648,7 +672,7 @@ BUTTON
 820
 275
 853
-输出结果文件
+输出优化方案
 NIL
 NIL
 1
