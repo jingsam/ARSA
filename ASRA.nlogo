@@ -190,9 +190,9 @@ to-report utility
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-672
+670
 10
-1568
+1566
 1580
 -1
 -1
