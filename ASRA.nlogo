@@ -203,7 +203,7 @@ end
 
 ;Evaluation---------------------------------------------
 to-report compact
-  report count neighbors with [village = 1 or village = 2] / count neighbors 
+  report count neighbors with [village > 0] / count neighbors 
 end
 
 to-report utility
