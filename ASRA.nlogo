@@ -84,7 +84,7 @@ to go
   ]  
  
   ask priority-villagers with [not all? neighbors4 [village = 2]] [
-    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles-on self]] of patch ox oy
+    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles-on self and not any? neighbors4 with [village = 3]]] of patch ox oy
     let village-id id
     
     if target != nobody and any? [neighbors4 with [id = village-id]] of target and [utility] of target > utility [
@@ -99,7 +99,7 @@ to go
   ;restricted-villagers stay put
   
   ask relocation-villagers [
-    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles-on self]] of patch ox oy
+    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles-on self and not any? neighbors4 with [village = 3]]] of patch ox oy
     
     if target != nobody and any? [neighbors4 with [village = 2]] of target [
       set village 0
