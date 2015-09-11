@@ -10,7 +10,7 @@ breed [relocation-villagers relocation-villager]
 turtles-own [ox oy]
 
 to setup
-  clear-all  
+  clear-all
   
   import-village-data
   import-id-data
@@ -29,7 +29,7 @@ to setup
       set ox pxcor
       set oy pycor
       set color green
-      set shape "person"
+      set shape "square"
       set size 1
     ]
   ]
@@ -40,7 +40,7 @@ to setup
       set ox pxcor
       set oy pycor
       set color red
-      set shape "person"
+      set shape "square"
       set size 1
     ]
   ]
@@ -51,7 +51,7 @@ to setup
       set ox pxcor
       set oy pycor
       set color blue
-      set shape "person"
+      set shape "square"
       set size 1
     ]
     
@@ -65,7 +65,7 @@ to setup
       set ox pxcor
       set oy pycor
       set color black
-      set shape "person"
+      set shape "square"
       set size 1
       ]
     ]
@@ -107,7 +107,7 @@ to go
       move-to target
       set village 2
       set id [id] of [one-of neighbors4 with [village = 2]] of target
-      hatch-priority-villagers 1 [set shape "person"]
+      hatch-priority-villagers 1 [set shape "square"]
       die
     ]
     
