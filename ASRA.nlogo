@@ -2,8 +2,10 @@ extensions [gis]
 
 patches-own [village id suit forbid]
 
-breed [central-villagers central-villager]
-breed [basic-villagers basic-villager]
+breed [urbanization-villagers urbanization-villager]
+breed [priority-villagers priority-villager]
+breed [restricted-villagers restricted-villager]
+breed [relocation-villagers relocation-villager]
 
 turtles-own [ox oy]
 
@@ -14,46 +16,77 @@ to setup
   import-id-data
   import-suit-data
   import-forbid-data
-  display-village-data
   
-  ;Intialize basic-villagers
+  ;Display background
+  ask patches [
+    set pcolor white    
+    if village >= 0 [set pcolor yellow]
+  ]  
+  
+  ;Intialize urbanization-villagers
   ask patches with [village = 1] [
+    sprout-urbanization-villagers 1 [
+      set ox pxcor
+      set oy pycor
+      set color green
+      set shape "person"
+      set size 1
+    ]
+  ]
+  
+  ;Intialize priority-villagers
+  ask patches with [village = 2] [
+    sprout-priority-villagers 1 [
+      set ox pxcor
+      set oy pycor
+      set color red
+      set shape "person"
+      set size 1
+    ]
+  ]
+  
+  ;Intialize restricted-villagers
+  ask patches with [village = 3] [
+    sprout-restricted-villagers 1 [
+      set ox pxcor
+      set oy pycor
+      set color blue
+      set shape "person"
+      set size 1
+    ]
+    
+    set pcolor yellow
+  ]
+  
+  ;Intialize relocation-villagers
+  ask patches with [village = 4] [
     ifelse (random-float 1) <= save-ratio
-    [sprout-basic-villagers 1 [
+    [sprout-relocation-villagers 1 [
       set ox pxcor
       set oy pycor
       set color black
-      set shape "square"
+      set shape "person"
       set size 1
       ]
     ]
     [set village 0]
-    
-    set pcolor yellow + 1
-  ]
+  ]  
   
-  ;Intialize central-villagers
-  ask patches with [village = 2] [
-    sprout-central-villagers 1 [
-      set ox pxcor
-      set oy pycor
-      set color red + 3
-      set shape "square"
-      set size 1
-    ]
-    
-    set pcolor yellow + 1
-  ]
   
   reset-ticks
 end
 
 to go
-  ask central-villagers with [not all? neighbors4 [village = 2]] [
+  ask urbanization-villagers [
+    set village 0
+    set id -9999
+    die
+  ]  
+ 
+  ask priority-villagers with [not all? neighbors4 [village = 2]] [
     let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles-on self]] of patch ox oy
     let village-id id
     
-    ;Intensive development
     if target != nobody and any? [neighbors4 with [id = village-id]] of target and [utility] of target > utility [
       set village 0
       set id -9999
@@ -63,25 +96,26 @@ to go
     ]
   ]
   
-  ask basic-villagers [
+  ;restricted-villagers stay put
+  
+  ask relocation-villagers [
     let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles-on self]] of patch ox oy
     
-    ;Urbanization
-    if any? [neighbors4 with [village = 3]] of target [
-      set village 0
-      set id -9999
-      die
-    ]
-    
-    ;Resettle to central village
-    if any? [neighbors4 with [village = 2]] of target [
+    if target != nobody and any? [neighbors4 with [village = 2]] of target [
       set village 0
       set id -9999
       move-to target
       set village 2
       set id [id] of [one-of neighbors4 with [village = 2]] of target
-      hatch-central-villagers 1 [set shape "square"]
+      hatch-priority-villagers 1 [set shape "person"]
       die
+    ]
+    
+    if target != nobody and [utility] of target > utility [
+      set village 0
+      set id -9999
+      move-to target
+      set village 4
     ]
   ]
   
@@ -89,6 +123,8 @@ to go
 
 end
 
+
+;Import data---------------------------------------------
 to-report import-data [file]
   ;gis:load-coordinate-system (word projection ".prj")
   let data gis:load-dataset file
@@ -121,28 +157,25 @@ to display-village-data
   import-village-data
   
   ask patches[
-    ifelse village = 0    
-    [set pcolor yellow + 1]
-    [ifelse village = 1
-      [set pcolor black]
-      [ifelse village = 2
-        [set pcolor red + 3]
-        [ifelse village = 3
-          [set pcolor red]
-          [set pcolor white]
-        ]        
-      ]
-    ]
+    set pcolor white
+    
+    if village = 0 [set pcolor yellow]
+    if village = 1 [set pcolor green]
+    if village = 2 [set pcolor red]
+    if village = 3 [set pcolor blue]
+    if village = 4 [set pcolor black]
   ]
 end
 
+
+;Display data---------------------------------------------
 to display-id-data
   import-id-data
   
   ask patches[
-    ifelse id >= 0
-    [set pcolor id]
-    [set pcolor white]
+    set pcolor white    
+    
+    if id >= 0 [set pcolor id]
   ]
 end
 
@@ -150,21 +183,9 @@ to display-suit-data
   import-suit-data
   
   ask patches[
-    ifelse suit <= 0.0
-    [set pcolor black]
-    [ifelse suit <= 0.25
-      [set pcolor black + 2]
-      [ifelse suit <= 0.5
-        [set pcolor black + 4]
-        [ifelse suit <= 0.75
-          [set pcolor black + 6]
-          [ifelse suit <= 1.0
-            [set pcolor black + 8]
-            [set pcolor white]
-          ]
-        ]
-      ]
-    ]    
+    set pcolor white
+    
+    if suit >= 0 [set pcolor scale-color black suit 0 1]
   ]  
 end
 
@@ -172,15 +193,15 @@ to display-forbid-data
   import-forbid-data
   
   ask patches[
-    ifelse forbid = 0
-    [set pcolor yellow + 1]
-    [ifelse forbid = 1
-      [set pcolor blue]
-      [set pcolor white]
-    ]
+    set pcolor white
+    
+    if forbid = 0 [set pcolor yellow]
+    if forbid = 1 [set pcolor blue]
   ]
 end
 
+
+;Evaluation---------------------------------------------
 to-report compact
   report count neighbors with [village = 1 or village = 2] / count neighbors 
 end
@@ -190,9 +211,9 @@ to-report utility
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-670
+680
 10
-1566
+1576
 1580
 -1
 -1
@@ -270,7 +291,7 @@ NIL
 PLOT
 305
 10
-667
+665
 325
 效用评价
 NIL
@@ -368,10 +389,10 @@ TEXTBOX
 1
 
 BUTTON
-14
-662
-214
-695
+10
+755
+210
+788
 导入适宜性数据
 set suit-data user-file
 NIL
@@ -385,10 +406,10 @@ NIL
 1
 
 INPUTBOX
-12
-702
-277
-762
+10
+790
+280
+850
 suit-data
 data\\HP\\suit.asc
 1
@@ -396,10 +417,10 @@ data\\HP\\suit.asc
 String
 
 BUTTON
-222
-663
-277
-696
+220
+755
+280
+788
 查看
 display-suit-data
 NIL
@@ -413,10 +434,10 @@ NIL
 1
 
 BUTTON
-304
-663
-501
-696
+10
+860
+207
+893
 导入禁止开发区
 set forbid-data user-file
 NIL
@@ -430,10 +451,10 @@ NIL
 1
 
 BUTTON
-507
-664
-570
-697
+220
+860
+280
+893
 查看
 display-forbid-data
 NIL
@@ -447,10 +468,10 @@ NIL
 1
 
 INPUTBOX
-303
-703
-571
-763
+10
+895
+280
+955
 forbid-data
 data\\HP\\forbid.asc
 1
@@ -458,10 +479,10 @@ data\\HP\\forbid.asc
 String
 
 INPUTBOX
-11
-583
-281
-643
+10
+580
+280
+640
 village-data
 data\\HP\\village.asc
 1
@@ -469,10 +490,10 @@ data\\HP\\village.asc
 String
 
 INPUTBOX
-302
-585
-572
-645
+10
+685
+280
+745
 id-data
 data\\HP\\id.asc
 1
@@ -484,7 +505,7 @@ BUTTON
 545
 211
 578
-导入农村居民点现状图
+导入农村居民点分类图
 set village-data user-file
 NIL
 1
@@ -497,10 +518,10 @@ NIL
 1
 
 BUTTON
-219
-544
-278
-577
+220
+545
+279
+578
 查看
 display-village-data
 NIL
@@ -514,10 +535,10 @@ NIL
 1
 
 BUTTON
-303
-543
-501
-576
+10
+650
+208
+683
 导入居民点编号数据
 set id-data user-file
 NIL
@@ -531,10 +552,10 @@ NIL
 1
 
 BUTTON
-509
-543
-572
-576
+220
+650
+280
+683
 查看
 display-id-data
 NIL
@@ -583,10 +604,10 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-17
-791
-167
-809
+15
+985
+165
+1003
 结果输出
 16
 0.0
@@ -595,7 +616,7 @@ TEXTBOX
 CHOOSER
 11
 485
-274
+281
 530
 projection
 projection
@@ -639,31 +660,31 @@ HORIZONTAL
 
 MONITOR
 305
-455
-480
-504
-中心村面积
-count patches with [village = 2]
+530
+665
+579
+城镇转化型村庄面积
+count patches with [village = 1]
 17
 1
 12
 
 MONITOR
-490
-455
+305
+585
 665
-504
-基层村面积
-count patches with [village = 1]
+634
+重点发展型村庄面积
+count patches with [village = 2]
 17
 1
 12
 
 BUTTON
 10
-820
-275
-853
+1015
+280
+1048
 输出优化方案
 gis:store-dataset gis:patch-dataset village user-new-file
 NIL
@@ -678,9 +699,9 @@ NIL
 
 MONITOR
 305
-330
-480
-379
+345
+665
+394
 适宜性
 mean [suit] of turtles
 6
@@ -689,9 +710,9 @@ mean [suit] of turtles
 
 MONITOR
 305
-385
+455
 665
-434
+504
 综合效用值
 mean [utility] of turtles
 6
@@ -699,13 +720,35 @@ mean [utility] of turtles
 12
 
 MONITOR
-490
-330
+305
+400
 665
-379
+449
 紧凑度
 mean [compact] of turtles
 6
+1
+12
+
+MONITOR
+305
+640
+665
+689
+限制发展型村庄面积
+count patches with [village = 3]
+17
+1
+12
+
+MONITOR
+305
+695
+665
+744
+迁弃型村庄面积
+count patches with [village = 4]
+17
 1
 12
 
