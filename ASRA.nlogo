@@ -652,7 +652,7 @@ max-distance
 max-distance
 0
 50
-10
+40
 1
 1
 NIL
