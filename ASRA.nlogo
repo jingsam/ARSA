@@ -76,17 +76,7 @@ to setup
   reset-ticks
 end
 
-to go
-  ask turtles with [village = 1] [
-    set village 0
-    set id -9999
-    die
-  ]
-  
-  ask turtles with [village = 2 and not all? neighbors4 [village = 2]] [
-    
-  ]
-  
+to go  
   ask urbanization-villagers [
     set village 0
     set id -9999
