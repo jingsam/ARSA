@@ -77,6 +77,16 @@ to setup
 end
 
 to go
+  ask turtles with [village = 1] [
+    set village 0
+    set id -9999
+    die
+  ]
+  
+  ask turtles with [village = 2 and not all? neighbors4 [village = 2]] [
+    
+  ]
+  
   ask urbanization-villagers [
     set village 0
     set id -9999
@@ -685,7 +695,7 @@ BUTTON
 1015
 280
 1048
-输出优化方案
+输出布局方案
 gis:store-dataset gis:patch-dataset village user-new-file
 NIL
 1
@@ -751,6 +761,23 @@ count patches with [village = 4]
 17
 1
 12
+
+BUTTON
+10
+1060
+280
+1093
+输出搬迁方案
+NIL
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
