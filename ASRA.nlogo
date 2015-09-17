@@ -1,5 +1,7 @@
 extensions [gis]
 
+globals [time]
+
 patches-own [village-type village-id suit forbid]
 
 breed [urbanization-villagers urbanization-villager]
@@ -11,6 +13,7 @@ turtles-own [ox oy]
 
 to setup
   clear-all
+  reset-timer
   
   import-village-data
   import-id-data
@@ -119,6 +122,7 @@ to go
     ]
   ]
   
+  set time timer
   tick
 
 end
@@ -484,7 +488,7 @@ INPUTBOX
 280
 640
 village-type-data
-data\\HP\\village.asc
+data\\HP\\village-type.asc
 1
 0
 String
@@ -495,7 +499,7 @@ INPUTBOX
 280
 745
 village-id-data
-data\\HP\\id.asc
+data\\HP\\village-id.asc
 1
 0
 String
@@ -768,6 +772,17 @@ NIL
 NIL
 NIL
 1
+
+MONITOR
+305
+765
+665
+814
+运行时间（S）
+time
+17
+1
+12
 
 @#$#@#$#@
 ## WHAT IS IT?
