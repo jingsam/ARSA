@@ -79,7 +79,9 @@ to setup
   reset-ticks
 end
 
-to go  
+to go
+  if ticks > max-iteration [stop]
+  
   ask urbanization-villagers [
     set village-type 0
     set village-id -9999
@@ -217,11 +219,11 @@ end
 GRAPHICS-WINDOW
 680
 10
-1575
-1579
+1309
+1117
 -1
 -1
-1.0
+0.7
 1
 10
 1
@@ -323,20 +325,20 @@ TEXTBOX
 1
 
 TEXTBOX
-16
-100
-166
-118
-效用函数
+15
+85
+165
+103
+参数
 16
 0.0
 1
 
 SLIDER
-15
-148
-280
-181
+14
+128
+279
+161
 suit-weight
 suit-weight
 0
@@ -348,10 +350,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-14
-210
-279
-243
+13
+190
+278
+223
 compact-weight
 compact-weight
 0
@@ -363,20 +365,20 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-16
-129
-166
-147
+15
+109
+165
+127
 适宜性权重
 14
 0.0
 1
 
 TEXTBOX
-15
-192
-165
-210
+14
+172
+164
+190
 紧凑度权重
 14
 0.0
@@ -573,30 +575,20 @@ NIL
 1
 
 TEXTBOX
-13
-265
-163
-283
-参数
-16
-0.0
-1
-
-TEXTBOX
-12
-291
-162
-309
+14
+235
+164
+253
 出地率
 14
 0.0
 1
 
 SLIDER
-11
-312
-277
-345
+13
+256
+279
+289
 save-ratio
 save-ratio
 0
@@ -638,20 +630,20 @@ TEXTBOX
 1
 
 TEXTBOX
-10
-356
-160
-374
+12
+300
+162
+318
 最大搬迁距离
 14
 0.0
 1
 
 SLIDER
-11
-375
-277
-408
+13
+319
+279
+352
 max-distance
 max-distance
 0
@@ -804,6 +796,31 @@ PENS
 "重点发展型村庄" 1.0 1 -2674135 true "" "histogram [village-type] of priority-villagers"
 "限制发展型村庄" 1.0 1 -13345367 true "" "histogram [village-type] of restricted-villagers"
 "迁弃型村庄" 1.0 1 -16777216 true "" "histogram [village-type] of relocation-villagers"
+
+SLIDER
+15
+385
+280
+418
+max-iteration
+max-iteration
+0
+1000
+400
+1
+1
+NIL
+HORIZONTAL
+
+TEXTBOX
+15
+365
+165
+383
+最大迭代次数
+14
+0.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
