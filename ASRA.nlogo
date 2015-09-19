@@ -217,8 +217,8 @@ end
 GRAPHICS-WINDOW
 680
 10
-1576
-1580
+1575
+1579
 -1
 -1
 1.0
@@ -232,13 +232,13 @@ GRAPHICS-WINDOW
 0
 1
 0
-885
+884
 0
-1538
+1537
 0
 0
 1
-ticks
+迭代次数
 30.0
 
 BUTTON
@@ -656,7 +656,7 @@ max-distance
 max-distance
 0
 50
-40
+10
 1
 1
 NIL
