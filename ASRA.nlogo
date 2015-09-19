@@ -1,6 +1,8 @@
 extensions [gis]
 
-patches-own [village id suit forbid]
+globals [time]
+
+patches-own [village-type village-id suit forbid]
 
 breed [urbanization-villagers urbanization-villager]
 breed [priority-villagers priority-villager]
@@ -11,6 +13,7 @@ turtles-own [ox oy]
 
 to setup
   clear-all
+  reset-timer
   
   import-village-data
   import-id-data
@@ -20,11 +23,11 @@ to setup
   ;Display background
   ask patches [
     set pcolor white    
-    if village >= 0 [set pcolor yellow]
+    if village-type >= 0 [set pcolor yellow]
   ]  
   
   ;Intialize urbanization-villagers
-  ask patches with [village = 1] [
+  ask patches with [village-type = 1] [
     sprout-urbanization-villagers 1 [
       set ox pxcor
       set oy pycor
@@ -35,7 +38,7 @@ to setup
   ]
   
   ;Intialize priority-villagers
-  ask patches with [village = 2] [
+  ask patches with [village-type = 2] [
     sprout-priority-villagers 1 [
       set ox pxcor
       set oy pycor
@@ -46,7 +49,7 @@ to setup
   ]
   
   ;Intialize restricted-villagers
-  ask patches with [village = 3] [
+  ask patches with [village-type = 3] [
     sprout-restricted-villagers 1 [
       set ox pxcor
       set oy pycor
@@ -59,7 +62,7 @@ to setup
   ]
   
   ;Intialize relocation-villagers
-  ask patches with [village = 4] [
+  ask patches with [village-type = 4] [
     ifelse (random-float 1) <= save-ratio
     [sprout-relocation-villagers 1 [
       set ox pxcor
@@ -69,56 +72,57 @@ to setup
       set size 1
       ]
     ]
-    [set village 0]
+    [set village-type 0]
   ]  
   
   
   reset-ticks
 end
 
-to go
+to go  
   ask urbanization-villagers [
-    set village 0
-    set id -9999
+    set village-type 0
+    set village-id -9999
     die
   ]  
  
-  ask priority-villagers with [not all? neighbors4 [village = 2]] [
-    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles-on self and not any? neighbors4 with [village = 3]]] of patch ox oy
-    let village-id id
+  ask priority-villagers with [not all? neighbors4 [village-type = 2]] [
+    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles-on self and not any? neighbors4 with [village-type = 3]]] of patch ox oy
+    let id village-id
     
     if target != nobody and any? [neighbors4 with [id = village-id]] of target and [utility] of target > utility [
-      set village 0
-      set id -9999
+      set village-type 0
+      set village-id -9999
       move-to target
-      set village 2
-      set id village-id
+      set village-type 2
+      set village-id id
     ]
   ]
   
   ;restricted-villagers stay put
   
   ask relocation-villagers [
-    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles-on self and not any? neighbors4 with [village = 3]]] of patch ox oy
+    let target [one-of patches in-radius max-distance with [forbid = 0 and not any? turtles-on self and not any? neighbors4 with [village-type = 3]]] of patch ox oy
     
-    if target != nobody and any? [neighbors4 with [village = 2]] of target [
-      set village 0
-      set id -9999
+    if target != nobody and any? [neighbors4 with [village-type = 2]] of target [
+      set village-type 0
+      set village-id -9999
       move-to target
-      set village 2
-      set id [id] of [one-of neighbors4 with [village = 2]] of target
+      set village-type 2
+      set village-id [village-id] of [one-of neighbors4 with [village-type = 2]] of target
       hatch-priority-villagers 1 [set shape "square"]
       die
     ]
     
     if target != nobody and [utility] of target > utility [
-      set village 0
-      set id -9999
+      set village-type 0
+      set village-id -9999
       move-to target
-      set village 4
+      set village-type 4
     ]
   ]
   
+  set time timer
   tick
 
 end
@@ -134,13 +138,13 @@ to-report import-data [file]
 end
 
 to import-village-data
-  let data import-data village-data
-  gis:apply-raster data village
+  let data import-data village-type-data
+  gis:apply-raster data village-type
 end
 
 to import-id-data
-  let data import-data id-data
-  gis:apply-raster data id
+  let data import-data village-id-data
+  gis:apply-raster data village-id
 end
 
 to import-suit-data
@@ -159,11 +163,11 @@ to display-village-data
   ask patches[
     set pcolor white
     
-    if village = 0 [set pcolor yellow]
-    if village = 1 [set pcolor green]
-    if village = 2 [set pcolor red]
-    if village = 3 [set pcolor blue]
-    if village = 4 [set pcolor black]
+    if village-type = 0 [set pcolor yellow]
+    if village-type = 1 [set pcolor green]
+    if village-type = 2 [set pcolor red]
+    if village-type = 3 [set pcolor blue]
+    if village-type = 4 [set pcolor black]
   ]
 end
 
@@ -175,7 +179,7 @@ to display-id-data
   ask patches[
     set pcolor white    
     
-    if id >= 0 [set pcolor id]
+    if village-id >= 0 [set pcolor village-id]
   ]
 end
 
@@ -203,7 +207,7 @@ end
 
 ;Evaluation---------------------------------------------
 to-report compact
-  report count neighbors with [village > 0] / count neighbors 
+  report count neighbors with [village-type > 0] / count neighbors 
 end
 
 to-report utility
@@ -483,8 +487,8 @@ INPUTBOX
 580
 280
 640
-village-data
-data\\HP\\village.asc
+village-type-data
+data\\HP\\village-type.asc
 1
 0
 String
@@ -494,8 +498,8 @@ INPUTBOX
 685
 280
 745
-id-data
-data\\HP\\id.asc
+village-id-data
+data\\HP\\village-id.asc
 1
 0
 String
@@ -506,7 +510,7 @@ BUTTON
 211
 578
 导入农村居民点分类图
-set village-data user-file
+set village-type-data user-file
 NIL
 1
 T
@@ -540,7 +544,7 @@ BUTTON
 208
 683
 导入居民点编号数据
-set id-data user-file
+set village-id-data user-file
 NIL
 1
 T
@@ -664,7 +668,7 @@ MONITOR
 665
 579
 城镇转化型村庄面积
-count patches with [village = 1]
+count patches with [village-type = 1]
 17
 1
 12
@@ -675,7 +679,7 @@ MONITOR
 665
 634
 重点发展型村庄面积
-count patches with [village = 2]
+count patches with [village-type = 2]
 17
 1
 12
@@ -685,8 +689,8 @@ BUTTON
 1015
 280
 1048
-输出优化方案
-gis:store-dataset gis:patch-dataset village user-new-file
+输出布局方案
+gis:store-dataset gis:patch-dataset village-type user-new-file
 NIL
 1
 T
@@ -736,7 +740,7 @@ MONITOR
 665
 689
 限制发展型村庄面积
-count patches with [village = 3]
+count patches with [village-type = 3]
 17
 1
 12
@@ -747,7 +751,35 @@ MONITOR
 665
 744
 迁弃型村庄面积
-count patches with [village = 4]
+count patches with [village-type = 4]
+17
+1
+12
+
+BUTTON
+10
+1060
+280
+1093
+输出搬迁方案
+NIL
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+MONITOR
+305
+765
+665
+814
+运行时间（S）
+time
 17
 1
 12
