@@ -293,10 +293,10 @@ NIL
 1
 
 PLOT
-305
-10
-665
-325
+310
+75
+670
+390
 效用评价
 NIL
 NIL
@@ -663,23 +663,23 @@ NIL
 HORIZONTAL
 
 MONITOR
-305
-530
-665
-579
+310
+890
+670
+939
 城镇转化型村庄面积
-count patches with [village-type = 1]
+count urbanization-villagers
 17
 1
 12
 
 MONITOR
-305
-585
-665
-634
+310
+945
+670
+994
 重点发展型村庄面积
-count patches with [village-type = 2]
+count priority-villagers
 17
 1
 12
@@ -702,10 +702,10 @@ NIL
 1
 
 MONITOR
-305
-345
-665
-394
+310
+395
+670
+444
 适宜性
 mean [suit] of turtles
 6
@@ -713,10 +713,10 @@ mean [suit] of turtles
 12
 
 MONITOR
-305
-455
-665
-504
+310
+505
+670
+554
 综合效用值
 mean [utility] of turtles
 6
@@ -724,10 +724,10 @@ mean [utility] of turtles
 12
 
 MONITOR
-305
-400
-665
-449
+310
+450
+670
+499
 紧凑度
 mean [compact] of turtles
 6
@@ -735,23 +735,23 @@ mean [compact] of turtles
 12
 
 MONITOR
-305
-640
-665
-689
+310
+1000
+670
+1049
 限制发展型村庄面积
-count patches with [village-type = 3]
+count restricted-villagers
 17
 1
 12
 
 MONITOR
-305
-695
-665
-744
+310
+1055
+670
+1104
 迁弃型村庄面积
-count patches with [village-type = 4]
+count relocation-villagers
 17
 1
 12
@@ -774,15 +774,36 @@ NIL
 1
 
 MONITOR
-305
-765
-665
-814
+310
+10
+670
+59
 运行时间（S）
 time
 17
 1
 12
+
+PLOT
+310
+575
+670
+885
+数量结构
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+true
+"" ""
+PENS
+"城镇转化型村庄" 1.0 1 -10899396 true "" "histogram [village-type] of urbanization-villagers"
+"重点发展型村庄" 1.0 1 -2674135 true "" "histogram [village-type] of priority-villagers"
+"限制发展型村庄" 1.0 1 -13345367 true "" "histogram [village-type] of restricted-villagers"
+"迁弃型村庄" 1.0 1 -16777216 true "" "histogram [village-type] of relocation-villagers"
 
 @#$#@#$#@
 ## WHAT IS IT?
