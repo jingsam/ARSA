@@ -80,7 +80,7 @@ to setup
 end
 
 to go
-  if ticks > max-iteration [stop]
+  if ticks >= max-iteration [stop]
   
   ask urbanization-villagers [
     set village-type 0
@@ -804,7 +804,7 @@ SLIDER
 418
 max-iteration
 max-iteration
-0
+1
 1000
 400
 1
