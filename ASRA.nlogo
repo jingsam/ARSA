@@ -63,7 +63,7 @@ to setup
   
   ;Intialize relocation-villagers
   ask patches with [village-type = 4] [
-    ifelse (random-float 1) <= save-ratio
+    ifelse (random-float 1) > save-ratio
     [sprout-relocation-villagers 1 [
       set ox pxcor
       set oy pycor
@@ -343,7 +343,7 @@ suit-weight
 suit-weight
 0
 1
-1
+0.5
 0.01
 1
 NIL
@@ -358,7 +358,7 @@ compact-weight
 compact-weight
 0
 1
-0
+0.5
 0.01
 1
 NIL
@@ -593,7 +593,7 @@ save-ratio
 save-ratio
 0
 1
-0.8
+0.2
 0.1
 1
 NIL
