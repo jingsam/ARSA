@@ -2,7 +2,7 @@ extensions [gis]
 
 globals [time]
 
-patches-own [village-type village-id suit forbid]
+patches-own [village-type village-id suit forbid village-admin]
 
 breed [urbanization-villagers urbanization-villager]
 breed [priority-villagers priority-villager]
@@ -15,10 +15,11 @@ to setup
   clear-all
   reset-timer
   
-  import-village-data
-  import-id-data
+  import-village-type-data
+  import-village-id-data
   import-suit-data
   import-forbid-data
+  import-village-admin-data
   
   ;Display background
   ask patches [
@@ -139,12 +140,12 @@ to-report import-data [file]
   report data
 end
 
-to import-village-data
+to import-village-type-data
   let data import-data village-type-data
   gis:apply-raster data village-type
 end
 
-to import-id-data
+to import-village-id-data
   let data import-data village-id-data
   gis:apply-raster data village-id
 end
@@ -159,8 +160,14 @@ to import-forbid-data
   gis:apply-raster data forbid
 end
 
-to display-village-data
-  import-village-data
+to import-village-admin-data
+  let data import-data village-admin-data
+  gis:apply-raster data village-admin
+end
+
+;Display data---------------------------------------------
+to display-village-type-data
+  import-village-type-data
   
   ask patches[
     set pcolor white
@@ -173,10 +180,8 @@ to display-village-data
   ]
 end
 
-
-;Display data---------------------------------------------
-to display-id-data
-  import-id-data
+to display-village-id-data
+  import-village-id-data
   
   ask patches[
     set pcolor white    
@@ -206,6 +211,15 @@ to display-forbid-data
   ]
 end
 
+to display-village-admin-data
+  import-village-admin-data
+  
+  ask patches[
+    set pcolor white
+    
+    if village-admin >= 0 [set pcolor village-admin]
+  ]
+end
 
 ;Evaluation---------------------------------------------
 to-report compact
@@ -397,7 +411,7 @@ TEXTBOX
 BUTTON
 10
 755
-210
+215
 788
 导入适宜性数据
 set suit-data user-file
@@ -442,7 +456,7 @@ NIL
 BUTTON
 10
 860
-207
+215
 893
 导入禁止开发区
 set forbid-data user-file
@@ -509,7 +523,7 @@ String
 BUTTON
 11
 545
-211
+216
 578
 导入农村居民点分类图
 set village-type-data user-file
@@ -529,7 +543,7 @@ BUTTON
 279
 578
 查看
-display-village-data
+display-village-type-data
 NIL
 1
 T
@@ -543,7 +557,7 @@ NIL
 BUTTON
 10
 650
-208
+215
 683
 导入居民点编号数据
 set village-id-data user-file
@@ -563,7 +577,7 @@ BUTTON
 280
 683
 查看
-display-id-data
+display-village-id-data
 NIL
 1
 T
@@ -601,9 +615,9 @@ HORIZONTAL
 
 TEXTBOX
 15
-985
+1080
 165
-1003
+1098
 结果输出
 16
 0.0
@@ -678,9 +692,9 @@ count priority-villagers
 
 BUTTON
 10
-1015
+1110
 280
-1048
+1143
 输出布局方案
 gis:store-dataset gis:patch-dataset village-type user-new-file
 NIL
@@ -750,9 +764,9 @@ count relocation-villagers
 
 BUTTON
 10
-1060
+1155
 280
-1093
+1188
 输出搬迁方案
 NIL
 NIL
@@ -821,6 +835,51 @@ TEXTBOX
 14
 0.0
 1
+
+BUTTON
+10
+965
+215
+998
+导入行政村范围
+set village-admin-data user-file
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+220
+965
+280
+998
+查看
+display-village-admin-data
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+INPUTBOX
+10
+1000
+280
+1060
+village-admin-data
+data\\HP\\village-admin.asc
+1
+0
+String
 
 @#$#@#$#@
 ## WHAT IS IT?
