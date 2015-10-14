@@ -818,10 +818,10 @@ SLIDER
 418
 max-iteration
 max-iteration
-1
+0
 1000
 400
-1
+10
 1
 NIL
 HORIZONTAL
